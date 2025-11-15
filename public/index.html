@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Rammerhead — Modern (Flat)</title>
+  <link rel="icon" href="/public/assets/favicon.png" />
+  <link rel="stylesheet" href="/public/assets/style.css" />
+</head>
+<body>
+  <div id="app" class="theme-light">
+    <header class="topbar">
+      <div class="brand">
+        <img src="/public/assets/logo.svg" alt="logo" class="logo" />
+        <span class="title">Rammerhead</span>
+      </div>
+      <div class="controls">
+        <div class="nav-buttons">
+          <button id="back" title="Back">◀</button>
+          <button id="forward" title="Forward">▶</button>
+          <button id="reload" title="Reload">⟳</button>
+        </div>
+        <div class="omnibox">
+          <input id="url" placeholder="Enter URL or search..." autocomplete="off" />
+          <button id="go">Go</button>
+        </div>
+      </div>
+      <div class="user"></div>
+    </header>
+
+    <div class="tabs" id="tabs">
+      <div class="tab active" data-id="tab1">New Tab <button class="close">✕</button></div>
+      <div class="tab add" id="addTab">＋</div>
+    </div>
+
+    <main id="main">
+      <iframe id="frame-tab1" class="browser-frame active" sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-popups"></iframe>
+    </main>
+
+    <footer class="statusbar">Rammerhead — Modern (Flat) • Built for Ultraviolet</footer>
+  </div>
+
+  <script src="/public/scripts/ui.js"></script>
+  <!-- Ultraviolet client files should be in project root (uv.bundle.js etc.) -->
+  <script src="/uv.bundle.js"></script>
+  <script>/* init UV if available */</script>
+</body>
+</html>

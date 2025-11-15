@@ -1,1 +1,0 @@
-self.__uv$config={prefix:'/uv/service/'};

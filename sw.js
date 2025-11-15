@@ -1,0 +1,1 @@
+// UV service worker placeholder

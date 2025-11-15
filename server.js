@@ -1,28 +1,42 @@
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
-import { createServer as createHttpServer } from "http";
-import { createBareServer, uvPath } from "@titaniumnetwork-dev/ultraviolet";
+import http from "http";
+import { createBareServer } from "@tomphttp/bare-server-node";
+import { uvPath } from "@titaniumnetwork-dev/ultraviolet";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
+const port = process.env.PORT || 3000;
 
-app.use(express.static(path.join(__dirname, "."), { index: "index.html" }));
-
-// Serve UV core files at /uv/
-app.use("/uv/", express.static(uvPath, { immutable: true, maxAge: "1y" }));
-
-// Mount Bare server at /service
 const bare = createBareServer("/bare/");
-app.use("/service", (req, res, next) => {
-    bare(req, res).catch(next);
+
+app.use(express.static(path.join(__dirname)));
+
+app.use("/uv/", express.static(uvPath));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
 });
 
-app.get("/_health", (req, res) => res.send("ok"));
+const server = http.createServer(app);
 
-const port = process.env.PORT || 3000;
-createHttpServer(app).listen(port, () => {
-    console.log("Server running on port " + port);
+server.on("upgrade", (req, socket, head) => {
+  if (bare.shouldRoute(req)) {
+    bare.routeUpgrade(req, socket, head);
+  } else {
+    socket.end();
+  }
+});
+
+server.on("request", (req, res) => {
+  if (bare.shouldRoute(req)) {
+    bare.routeRequest(req, res);
+  } else {
+    app(req, res);
+  }
+});
+
+server.listen(port, () => {
+  console.log("Listening on port", port);
 });

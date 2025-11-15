@@ -1,0 +1,26 @@
+name: Generate package-lock.json
+
+on:
+  push:
+    paths:
+      - 'package.json'
+      - '.github/workflows/generate-lockfile.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install (generate lockfile)
+        run: npm install --package-lock-only
+      - name: Commit lockfile
+        uses: EndBug/add-and-commit@v9
+        with:
+          message: "chore: add package-lock.json (auto)"
+          add: 'package-lock.json'
+          author_name: 'auto-lockfile-bot'
+          author_email: 'action@local'

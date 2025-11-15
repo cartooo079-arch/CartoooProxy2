@@ -1,39 +1,45 @@
-
 import express from "express";
+import http from "http";
 import path from "path";
 import { fileURLToPath } from "url";
-import UV from "@titaniumnetwork-dev/ultraviolet";
+import { createBareServer } from "@tomphttp/bare-server-node";
+import { uvPath } from "@titaniumnetwork-dev/ultraviolet";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 8080;
+const port = process.env.PORT || 8080;
 
-// UV backend setup
-const uv = new UV({
-    prefix: "/uv/service/",
-    bare: "https://raw.githubusercontent.com/tomphttp/bare-server-node/master/src/",
+// Serve static public UI
+app.use('/public', express.static(path.join(__dirname, 'public')));
+
+// Serve UV core files from uvPath under /uv/
+app.use('/uv/', express.static(uvPath, { immutable: true, maxAge: '1y' }));
+
+// If local uv files exist in root (copied), serve them too
+app.use('/', express.static(path.join(__dirname)));
+
+// Create bare server and mount it at /service
+const bare = createBareServer('/bare/');
+app.use('/service', (req, res, next) => {
+  bare(req, res).catch(next);
 });
 
-app.use("/uv/service/", uv.handle());
-app.use("/uv/rewrites/", uv.rewrite());
-app.use("/uv/sw.js", (req, res) =>
-    res.sendFile(path.join(__dirname, "uv", "sw.js"))
-);
-app.use("/uv/uv.config.js", (req, res) =>
-    res.sendFile(path.join(__dirname, "uv", "uv.config.js"))
-);
+// Health
+app.get('/_health', (req, res) => res.send('ok'));
 
-// Serve public UI
-app.use(express.static(path.join(__dirname, "public")));
-
-// Serve UV static
-app.use("/uv/", express.static(path.join(__dirname, "uv")));
-
-// Fallback
-app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "index.html"));
+// Fallback for SPA: serve public index
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.listen(PORT, () => console.log("Running on port " + PORT));
+const server = http.createServer(app);
+server.on('upgrade', (req, socket, head) => {
+  if (bare.shouldRoute(req)) {
+    bare.routeUpgrade(req, socket, head);
+  } else {
+    socket.end();
+  }
+});
+server.listen(port, () => console.log('Server listening on port', port));

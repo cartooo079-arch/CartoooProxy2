@@ -1,13 +1,16 @@
 {
-  "name": "cartoooproxy2",
+  "name": "modern-rammerhead-uv",
   "version": "1.0.0",
-  "main": "server.js",
   "type": "module",
-  "dependencies": {
-    "@titaniumnetwork-dev/ultraviolet": "3.2.7",
-    "express": "^4.18.2"
-  },
   "scripts": {
     "start": "node server.js"
+  },
+  "engines": {
+    "node": "18.x"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "@tomphttp/bare-server-node": "^2.0.0",
+    "@titaniumnetwork-dev/ultraviolet": "3.2.7"
   }
 }

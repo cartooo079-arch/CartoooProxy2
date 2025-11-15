@@ -1,0 +1,18 @@
+{
+  "name": "uv-rammer-koyeb",
+  "version": "1.0.0",
+  "description": "Ultraviolet + Rammerhead UI ready for Koyeb",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": "18.x"
+  },
+  "dependencies": {
+    "express": "4.18.2",
+    "@titaniumnetwork-dev/ultraviolet": "3.2.7",
+    "node-fetch": "2.6.7"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "uv-rammer-koyeb",
+  "version": "1.0.0",
+  "description": "Ultraviolet + Rammerhead UI ready for Koyeb",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs"
+  },
+  "engines": {
+    "node": "18.x"
+  },
+  "dependencies": {
+    "express": "^4",
+    "@tomphttp/bare-server-node": "latest"
+  }
+}
